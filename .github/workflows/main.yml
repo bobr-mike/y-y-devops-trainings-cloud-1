@@ -9,15 +9,24 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Build image
-        run: docker build -t "cr.yandex/crp6s12nuv1e43akkgok/catgpt:v2.0" .
-      # - name: Log in to Docker Hub
-      #   run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push image to Docker Hub
-        run: docker push cr.yandex/crp6s12nuv1e43akkgok/catgpt:v2.0
+  
 
+    # Steps represent a sequence of tasks
+    # that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE,
+      # so your job can access it
+      - uses: actions/checkout@v2
+      # Runs a single command using the runners shell
+      - name: Yandex Cloud CR "Login" Action for GitHub Actions
+        uses: yc-actions/yc-cr-login@v0.1-alpha
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+      - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+            CR_REGISTRY: crp6s12nuv1e43akkgok
+            CR_REPO: catgpt
+            IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t cr.yandex/$CR_REGISTRY/$CR_REPO:$IMAGE_TAG .
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPO:$IMAGE_TAG
