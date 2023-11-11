@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build image
-        run: make docker-build
+        run: docker build -t "cr.yandex/crp6s12nuv1e43akkgok/catgpt:v2.0" .
       - name: Log in to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Push image to Docker Hub
